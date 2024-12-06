@@ -34,3 +34,4 @@ data = data[data['label'].isin([0,1,2,3,4,5])]
 data['text'] = data['text'].apply(clean)
 
 data.to_csv('data.csv',index=False)
+print(data)
