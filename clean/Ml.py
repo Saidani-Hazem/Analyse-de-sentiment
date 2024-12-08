@@ -32,14 +32,19 @@ X = data["text"]
 Y = data["label"]
 
 from sklearn.model_selection import train_test_split
+
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+
 vectorizer = TfidfVectorizer(max_features=5000)
 X_train_tfidf = vectorizer.fit_transform(X_train)
 X_test_tfidf = vectorizer.transform(X_test)
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report,confusion_matrix, ConfusionMatrixDisplay
 
 model = LogisticRegression(max_iter=1000)
 model.fit(X_train_tfidf, y_train)
@@ -47,6 +52,8 @@ model.fit(X_train_tfidf, y_train)
 y_pred = model.predict(X_test_tfidf)
 classificationResults = classification_report(y_test, y_pred,output_dict=True)
 accuracyScore = classificationResults["accuracy"]
+cm = confusion_matrix(y_test,y_pred)
+
 
 feelings = ["SADNESS","JOY","LOVE","ANGER","FEAR","SURPRISE"]
 def PredictWhatUserTyped(text):
@@ -54,8 +61,11 @@ def PredictWhatUserTyped(text):
     samplePrediction = model.predict(sampleToTest)
     return feelings[samplePrediction[0]]
 
+#-----------------------------------------------------------------------
 
 import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 st.header("Data Visualization")
 
@@ -74,9 +84,19 @@ if st.button("Click Me!"):
 
 # Displaying the table
 st.write("### Database Table")
-st.dataframe(data) 
+st.dataframe(data.head(10)) 
 
 # Plot 1: Simple Line Chart
-st.subheader("Line Chart")
+st.title("Matrice de Confusion")
+fig, ax = plt.subplots()
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", 
+            xticklabels=feelings,
+            yticklabels=feelings)
+plt.ylabel('Vraies classes')
+plt.xlabel('Classes prédites')
+plt.title('Matrice de Confusion')
+st.pyplot(fig)
+
+
 # Footer
 st.sidebar.info("Powered by Streamlit")
