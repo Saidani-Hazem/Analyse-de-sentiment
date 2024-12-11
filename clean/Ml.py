@@ -96,6 +96,13 @@ plt.ylabel('Vraies classes')
 plt.xlabel('Classes prédites')
 plt.title('Matrice de Confusion')
 st.pyplot(fig)
+#-------------------------------------------------------
+st.title("Pie")
+
+st.pyplot(plt.pie(data=[data["label"]]))
+
+
+
 
 
 # Footer
